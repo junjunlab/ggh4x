@@ -1,6 +1,9 @@
 # ggh4x (development version)
 
-* Fixed misplacement of nest lines in vertical strips (#50)
+* Fixed misplacement of nest lines in vertical strips (#50).
+* Mitigated regression for pre-R4.0 version (#49).
+* Added `scale_{x/y}_panels()` to wrap `facetted_pos_scales()` in a more 
+  convenient manner.
 
 # ggh4x 0.2.0
 

@@ -69,6 +69,7 @@ Collate:
     'scale_dendrogram.R'
     'scale_listed.R'
     'scale_multi.R'
+    'scale_panels.R'
     'stat_difference.R'
     'stat_funxy.R'
     'stat_rle.R'
