@@ -180,10 +180,10 @@ ggplot_add.facetted_pos_scales <- function(object, plot, object_name) {
     # We have already initialised facetted position scales
     # Just need to update the new scales
     if (!all(empty_x)) {
-      plot$facet$new_x_scales <- object$x
+      plot$facet <- plot$facet$ingest("x", object$x)
     }
     if (!all(empty_y)) {
-      plot$facet$new_y_scales <- object$y
+      plot$facet <- plot$facet$ingest("y", object$y)
     }
     return(plot)
   }
@@ -220,7 +220,8 @@ ggplot_add.facetted_pos_scales <- function(object, plot, object_name) {
     new_y_scales = object$y,
     init_scales  = init_scales_individual,
     train_scales = train_scales_individual,
-    finish_data  = finish_data_individual
+    finish_data  = finish_data_individual,
+    ingest = ingest_new
   )
 
   plot$facet <- newfacet
@@ -348,4 +349,32 @@ should_transform <- function(scale, columns) {
     return(character(0))
   }
   vars <- intersect(scale$aesthetics, columns)
+}
+
+ingest_new <- function(self, aes, new) {
+  if (aes == "x") {
+    old <- self$new_x_scales
+  } else {
+    old <- self$new_y_scales
+  }
+  rhs <- c(old, new)
+  if ("lhs" %in% names(attributes(old)) ||
+      "lhs" %in% names(attributes(new))) {
+    lhs_old <- attr(old, "lhs")
+    lhs_new <- attr(new, "lhs")
+    stopifnot(
+      "Cannot mix formula style and list style inputs for facetted scales" =
+        length(lhs_old) > 0 && length(lhs_new) > 0
+    )
+    lhs <- c(lhs_old, lhs_new)
+  }
+  newlist <- structure(rhs, lhs = lhs, class = "list")
+  new <- ggproto(NULL, self)
+
+  if (aes == "x") {
+    new$new_x_scales <- newlist
+  } else {
+    new$new_y_scales <- newlist
+  }
+  new
 }
